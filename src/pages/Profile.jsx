@@ -65,8 +65,7 @@ const Profile = () => {
               type="email"
               id="email"
               value={email}
-              disabled={!changeDetail}
-              onChange={inputOnChangeHandler}
+              disabled
               className=" mb-6 w-full px-4 py-2 text-xl text-gray-700  bg-white  border border-gray-300 rounded transition ease-in-out"
             />
             <div className="flex mb-6 justify-between whitespace-nowrap text-sm sm:text-lg">
