@@ -9,7 +9,14 @@ import {
 } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
-import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import {
+  // addDoc,
+  // collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -17,7 +24,7 @@ import { useEffect } from "react";
 export default function CreateListing() {
   const navigate = useNavigate();
   const auth = getAuth();
-  const [geolocationEnabled] = useState(true);
+  const [geolocationEnabled /* setGeolocationEnabled */] = useState(true);
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState(null);
   const [formData, setFormData] = useState({
@@ -56,13 +63,6 @@ export default function CreateListing() {
   const params = useParams();
 
   useEffect(() => {
-    if (listing && listing.userRef !== auth.currentUser.uid) {
-      toast.error("You can't edit this listing");
-      navigate("/");
-    }
-  }, [auth.currentUser.uid, listing, navigate]);
-
-  useEffect(() => {
     setLoading(true);
     async function fetchListing() {
       const docRef = doc(db, "listings", params.listingId);
@@ -79,6 +79,12 @@ export default function CreateListing() {
     fetchListing();
   }, [navigate, params.listingId]);
 
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      toast.error("You can't edit this listing");
+      navigate("/");
+    }
+  }, [auth.currentUser.uid, listing, navigate]);
   function onChange(e) {
     let boolean = null;
     if (e.target.value === "true") {
@@ -179,8 +185,8 @@ export default function CreateListing() {
 
     const imgUrls = await Promise.all(
       [...images].map((image) => storeImage(image))
-    ).catch((error) => {
-      setLoading(false);
+    ).catch(() => {
+      // setLoading(false);
       toast.error("Images not uploaded");
       return;
     });
